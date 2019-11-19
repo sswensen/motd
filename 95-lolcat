@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# Requires fortune, cowsay, lolcat
+# A pre-existing syslink is not required
+
+export LANG="en_US.UTF-8"
+export PATH="/usr/games:/usr/local/bin:$PATH"
+
+msg=`fortune -a -s`
+
+# Randomly select a cowsay mode
+modes=("" -b -d -g -p -s -t -w -y ); mode=${modes[$(($RANDOM % 9))]}
+
+# Randomly select cowsay or cowthink
+cowdos=(cowsay cowthink); cowdo=${cowdos[$(($RANDOM % 2))]}
+
+# Radomly pick a cow picture file
+speaker=`cowsay -l | sed '1d;s/ /\n/g'| sort -R | head -1`
+
+# Set lolcat
+c_lolcat="$(command -v lolcat_m)" || c_lolcat="$(command -v lolcat)"
+
+# Print to motd
+printf "\n"
+echo "UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED
+You must have explicit, authorized permission to access or configure this device. Unauthorized attempts and actions to access or use this system may result in civil and/or criminal penalties.
+All activities performed on this device are logged and monitored."
+printf "\n"
+echo "$msg" | $cowdo -n -f $speaker $mode | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g" | $c_lolcat -f
+printf "\n"
